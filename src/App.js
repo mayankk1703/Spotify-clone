@@ -1,4 +1,4 @@
-import React,{useContext, useEffect,useReducer,useState} from 'react';
+import React,{useContext, useEffect,useReducer} from 'react';
 import './App.css';
 import Login from './Components/Login';
 import { getTokenFromResponse } from './Components/spotify';
@@ -9,11 +9,11 @@ import { StateContext } from './index';
 const spotify=new SpotifyWebApi();
 
 function App() {
-    const [token,setToken]=useState(null);
+
     const fl=useContext(StateContext);
     // console.log(fl);
 
-    const [{ user },dispatch]=useReducer(fl.reducer,fl.initialState);
+    const [{ user,token },dispatch]=useReducer(fl.reducer,fl.initialState);
     useEffect(()=>{
 
         const hash=getTokenFromResponse();
@@ -21,13 +21,13 @@ function App() {
         const _token=hash.access_token;
         if(_token)
         {
-            setToken(_token);
+
             spotify.setAccessToken(_token);
 
-            // dispatch({
-            //     type:'SET_TOKEN',
-            //     token:_token
-            // });
+            dispatch({
+                type:'SET_TOKEN',
+                token:_token
+            });
             
             spotify.getMe().then((user)=>{
 
@@ -39,6 +39,7 @@ function App() {
         }
     },[]);
     console.log(user);
+    console.log(token);
     return (
         <div className="App">
         {
